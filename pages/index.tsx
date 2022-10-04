@@ -1,14 +1,29 @@
+import { GetStaticProps } from "next";
 import EventList from "../components/events/event-list";
-import { getFeaturedEvents } from "../dummy-data";
+import { getFeaturedEvents } from "../helpers/api-util";
+import { IEvent } from "../interfaces/Event";
 
-const HomePage = () => {
-  const events = getFeaturedEvents();
+interface IHomeProps {
+  featuredEvents: IEvent[];
+}
 
+const HomePage = (props: IHomeProps) => {
   return (
     <div>
-      <EventList items={events} />
+      <EventList items={props.featuredEvents} />
     </div>
   );
+};
+
+export const getStaticProps: GetStaticProps<IHomeProps> = async (context) => {
+  const featuredEvents = await getFeaturedEvents();
+
+  return {
+    props: {
+      featuredEvents,
+    },
+    revalidate: 1,
+  };
 };
 
 export default HomePage;
