@@ -9,8 +9,8 @@ export const getAllEvents = async () => {
   for (const key in data) {
     events.push({
       id: key,
-      ...data[key]
-    })
+      ...data[key],
+    });
   }
   return events;
 };
@@ -18,4 +18,28 @@ export const getAllEvents = async () => {
 export const getFeaturedEvents = async () => {
   const events = await getAllEvents();
   return events ? events.filter((event) => event.isFeatured) : [];
+};
+
+export const getEventById = async (id: string): Promise<IEvent | undefined> => {
+  const events = await getAllEvents();
+
+  return events.find((event) => event.id === id);
+};
+
+export const getFilteredEvents = async (dateFilter: {
+  year: number;
+  month: number;
+}): Promise<IEvent[]> => {
+  const { year, month } = dateFilter;
+
+  const events = await getAllEvents();
+
+  let filteredEvents = events.filter((event) => {
+    const eventDate = new Date(event.date);
+    return (
+      eventDate.getFullYear() === year && eventDate.getMonth() === month - 1
+    );
+  });
+
+  return filteredEvents;
 };

@@ -1,27 +1,30 @@
-import { useRouter } from "next/router";
+import {
+  GetStaticPaths,
+  GetStaticProps,
+  GetStaticPropsContext,
+  PreviewData,
+} from "next";
+import { ParsedUrlQuery } from "querystring";
 import EventContent from "../../components/event-detail/event-content";
 import EventLogistics from "../../components/event-detail/event-logistics";
 import EventSummary from "../../components/event-detail/event-summary";
 import Button from "../../components/ui/button";
 import ErrorAlert from "../../components/ui/error-alert";
-import { getEventById } from "../../dummy-data";
+import { getEventById, getFeaturedEvents } from "../../helpers/api-util";
+import { IEvent } from "../../interfaces/Event";
 
-const EventDetailsPage = () => {
-  const router = useRouter();
+interface IEventDetailsPageProps {
+  event?: IEvent;
+}
 
-  const eventId = router.query.eventId;
-  const event = getEventById(eventId as string);
+const EventDetailsPage = (props: IEventDetailsPageProps) => {
+  const { event } = props;
 
   if (!event) {
     return (
-      <>
-        <ErrorAlert>
-          <p>No event found</p>
-        </ErrorAlert>
-        <div className="center">
-          <Button link="/events">Show All Events</Button>
-        </div>
-      </>
+      <div className="center">
+        <p>Loading...</p>
+      </div>
     );
   }
 
@@ -39,6 +42,34 @@ const EventDetailsPage = () => {
       </EventContent>
     </>
   );
+};
+
+export const getStaticProps: GetStaticProps<IEventDetailsPageProps> = async (
+  context: GetStaticPropsContext<ParsedUrlQuery, PreviewData>
+) => {
+  const { params } = context;
+  const eventId = params?.eventId;
+  const event = await getEventById(eventId as string);
+
+  return {
+    props: {
+      event,
+    },
+    revalidate: 30,
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const events = await getFeaturedEvents();
+
+  const paths = events.map((event) => ({
+    params: { eventId: event.id },
+  }));
+
+  return {
+    paths,
+    fallback: true,
+  };
 };
 
 export default EventDetailsPage;
