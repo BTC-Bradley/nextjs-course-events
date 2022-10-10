@@ -1,4 +1,5 @@
 import { GetStaticProps } from "next";
+import Head from "next/head";
 import EventList from "../components/events/event-list";
 import { getFeaturedEvents } from "../helpers/api-util";
 import { IEvent } from "../interfaces/Event";
@@ -10,6 +11,10 @@ interface IHomeProps {
 const HomePage = (props: IHomeProps) => {
   return (
     <div>
+      <Head>
+        <title>NextJS Events</title>
+        <meta name="description" content="Find sweet events that are bussin" />
+      </Head>
       <EventList items={props.featuredEvents} />
     </div>
   );

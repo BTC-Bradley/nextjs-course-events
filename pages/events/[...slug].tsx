@@ -1,4 +1,5 @@
 import { GetServerSidePropsContext } from "next";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import EventList from "../../components/events/event-list";
 import ResultsTitle from "../../components/events/results-title";
@@ -32,7 +33,9 @@ const FilteredEventsPage = (props: IFilteredEventsPageProps) => {
 
   const { events, dateData } = props;
 
-  const date = dateData ? new Date(dateData.year, dateData.month - 1) : new Date();
+  const date = dateData
+    ? new Date(dateData.year, dateData.month - 1)
+    : new Date();
 
   if (!events || events.length === 0) {
     return (
@@ -49,6 +52,15 @@ const FilteredEventsPage = (props: IFilteredEventsPageProps) => {
 
   return (
     <>
+      <Head>
+        <title>
+          Event Search Results {dateData?.month}/{dateData?.year}
+        </title>
+        <meta
+          name="description"
+          content={`Events in ${dateData?.month}/${dateData?.year}`}
+        />
+      </Head>
       <ResultsTitle date={date} />
       <EventList items={events} />
     </>
@@ -94,8 +106,8 @@ export const getServerSideProps = async (
         events,
         dateData: {
           month,
-          year
-        }
+          year,
+        },
       },
     };
   } else {
