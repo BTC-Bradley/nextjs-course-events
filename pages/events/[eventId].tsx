@@ -9,6 +9,7 @@ import { ParsedUrlQuery } from "querystring";
 import EventContent from "../../components/event-detail/event-content";
 import EventLogistics from "../../components/event-detail/event-logistics";
 import EventSummary from "../../components/event-detail/event-summary";
+import Comments from "../../components/input/comments";
 import Button from "../../components/ui/button";
 import ErrorAlert from "../../components/ui/error-alert";
 import { getEventById, getFeaturedEvents } from "../../helpers/api-util";
@@ -45,6 +46,7 @@ const EventDetailsPage = (props: IEventDetailsPageProps) => {
       <EventContent>
         <p>{event.description}</p>
       </EventContent>
+      <Comments eventId={event.id} />
     </>
   );
 };
